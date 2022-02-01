@@ -1,6 +1,8 @@
 import visvis as vv # Visualizer
 import numpy as np # Math functions
 import PySimpleGUI as sg # For GUI
+import PyQt5 # Guarantee a backend is included
+from threading import Thread # Running multiple functions
 
 # --- Start Code  --- #
 
@@ -42,18 +44,23 @@ app = vv.use() # Create app instance
 ## is acting as the loop
 
 # GUI loop
-run = True
-while run:
-    sg.theme('Dark Blue 3')  # set gui theme
-    # Define layout
-    layout = [
-        [sg.Text('Add Objects                                            ', justification='center')],
-        [sg.Button("Add Plane")],
-        [sg.Button("Add Plane")],
-    ]
-    window = sg.Window('Add Objects', layout) # Open window
-    event, values = window.read() # Get inputs
-    window.close() # Close window
-    
-    if event == sg.WIN_CLOSED or event == 'Exit':
-        run = False # Exit condition
+def guiLoop():
+  run = True
+  while run:
+      sg.theme('Dark Blue 3')  # set gui theme
+      # Define layout
+      layout = [
+          [sg.Text('Add Objects                                            ', justification='center')],
+          [sg.Button("Add Plane")],
+          [sg.Button("Add Plane")],
+      ]
+      window = sg.Window('Add Objects', layout) # Open window
+      event, values = window.read() # Get inputs
+      window.close() # Close window
+      
+      if event == sg.WIN_CLOSED or event == 'Exit':
+          run = False # Exit condition
+
+Thread(target = guiLoop).start()
+Thread(target = app.Run()).start()
+
