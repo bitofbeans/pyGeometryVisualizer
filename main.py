@@ -96,12 +96,13 @@ def guiLoop(): # GUI loop
             rot = values["planeRot"] 
             direction = values["planeDX"], values["planeDY"], values["planeDZ"]
             xx,yy,zz = values["planeX"], values["planeY"], values["planeZ"]
-            
+            xx,yy,zz = float(xx), float(yy), float(zz)
             # Create plane
             plane = createPlane((xx, yy, zz), (6, 6), direction, rot)
             
         elif event == "Add Point":
             xx,yy,zz = values["pointX"], values["pointY"], values["pointZ"] # Get values
+            xx,yy,zz = float(xx), float(yy), float(zz)
             pointset = vv.Point(xx,yy,zz) # Create point from pos
             
             points[ALPHABET[idx]] = xx, yy, zz # Add to points list
@@ -110,14 +111,19 @@ def guiLoop(): # GUI loop
             point.alpha = 0.5 # Transparent
             txt = vv.Text(a, ALPHABET[idx], xx-0.08, yy, zz+0.15, color='w') # Add Text label
             idx += 1 # Increment Point num
+            print(points)
         elif event == "Add Line":
             p1 = points[values["line1"]] # get point 1
             p2 = points[values["line2"]] # get point 2
-            pp = [list(p1),list(p2)] # create point set from points
-            
-            line = vv.Line(a,pp) # create line
-            line.lw = 3
-            line.lc = 'w'
+
+            pp = vv.Pointset(3) # create 3d pointset
+            pp.append(p1) # add point1
+            pp.append(p2) # add point2
+
+            line = vv.solidLine(pp, radius = 0.1) # create line
+            N = line._vertices.shape[0] # get vertices
+            line.SetValues( np.linspace(0,1,N) )
+            line.colormap = vv.CM_HOT
 
         if event == sg.WIN_CLOSED or event == 'Exit':
             run = False # Exit condition
